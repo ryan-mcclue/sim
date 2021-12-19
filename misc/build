@@ -1,0 +1,3 @@
+#!/bin/sh
+
+gcc -g sim.c -o ~/prog/apps/simulate-input/bin/simulate-input

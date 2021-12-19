@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: zlib-acknowledgement
+
+*
+!*/
+
+!.gitignore
+!README.md
+!LICENSE
+
+!sim.c
+
+!misc/**/*
