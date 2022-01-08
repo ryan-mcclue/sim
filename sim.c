@@ -80,7 +80,12 @@ main(int argc, char *argv[])
   // Tweak per system
   sleep_ms(120);
 
-#if 1
+// #define QEMU_XPACK 0
+// #define QEMU_UPSTREAM 0
+// #define NATIVE_QT 0
+#define QEMU_UPSTREAM 1
+
+#if defined(QEMU_XPACK)
   pid_t cur_pid = fork();
   if (cur_pid == 0)
   {
@@ -93,7 +98,7 @@ main(int argc, char *argv[])
          "--board", "STM32F4-Discovery",
          "--mcu", "STM32F429ZI",
          "--semihosting-config", "enable=on,target=native",
-         "--image", "/home/ryan/prog/personal/tra/build/test-tem.elf",
+         "--image", "/home/ryan/prog/personal/tra/build/simulator-tem.elf",
          NULL
     };
     int res = execve("/home/ryan/prog/cross/arm/xpack-qemu-arm-2.8.0-13/bin/qemu-system-gnuarmeclipse", 
@@ -106,8 +111,38 @@ main(int argc, char *argv[])
     send_keypress(uinput_fd, KEY_TAB);
     send_keypress(uinput_fd, KEY_ENTER);
   }
+#endif
 
-#else
+#if defined(QEMU_UPSTREAM)
+  pid_t cur_pid = fork();
+  if (cur_pid == 0)
+  {
+    // TODO(Ryan): Enable graphical output
+    char *my_argv[64] = {
+         "/usr/bin/qemu-system-arm",
+         "-S", 
+         "-gdb", "tcp::1234", 
+         "-machine", "raspi2",
+         "-no-reboot",
+         "-nographic",
+         "-serial", "mon:stdio",
+         "-kernel", "/home/ryan/prog/personal/ras/build/ras.elf",
+         NULL
+    };
+    int res = execve("/usr/bin/qemu-system-arm", 
+        (char **)my_argv, NULL);
+  }
+  else
+  {
+    sleep_ms(30);
+    send_keypress(uinput_fd, KEY_F11);
+    send_keypress(uinput_fd, KEY_TAB);
+    send_keypress(uinput_fd, KEY_ENTER);
+  }
+
+#endif
+
+#if defined(NATIVE_QT)
   send_keypress(uinput_fd, KEY_F12);
   send_keypress(uinput_fd, KEY_TAB);
   send_keypress(uinput_fd, KEY_ENTER);
