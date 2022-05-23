@@ -80,13 +80,42 @@ main(int argc, char *argv[])
   // Tweak per system
   sleep_ms(120);
 
+// #define REMOTE_LINUX 0 
 // #define QEMU_XPACK 0
 // #define QEMU_UPSTREAM 0
 // #define NATIVE_QT 0
-#define QEMU_UPSTREAM 1
+#define REMOTE_LINUX 1
+
+#if defined(REMOTE_LINUX)
+  pid_t cur_pid = vfork();
+  if (cur_pid == 0)
+  {
+    char *my_argv[128] = {
+         "/usr/bin/bash", "--rcfile", "/home/ryan/.bashrc", "-c", 
+         "ssh ryan@raspi2 'cd /home/ryan/prog/personal/example; gdbserver :1234 raspi2'",
+         "exit",
+         NULL
+    };
+    // IMPORTANT(Ryan): This environment will have to be updated every time...
+    char *my_env[128] = {
+      "SSH_AUTH_SOCK=/tmp/ssh-6DpHes1OX2Qd/agent.1493",
+      NULL,
+    };
+    int res = execve("/usr/bin/bash", 
+        (char **)my_argv, my_env);
+  }
+  else
+  {
+    sleep_ms(50);
+    send_keypress(uinput_fd, KEY_F11);
+    send_keypress(uinput_fd, KEY_TAB);
+    send_keypress(uinput_fd, KEY_ENTER);
+  }
+
+#endif
 
 #if defined(QEMU_XPACK)
-  pid_t cur_pid = fork();
+  pid_t cur_pid = vfork();
   if (cur_pid == 0)
   {
     char *my_argv[64] = {
@@ -136,7 +165,7 @@ main(int argc, char *argv[])
   {
     sleep_ms(30);
     send_keypress(uinput_fd, KEY_F11);
-    send_keypress(uinput_fd, KEY_TAB);
+    //send_keypress(uinput_fd, KEY_TAB);
     send_keypress(uinput_fd, KEY_ENTER);
   }
 
@@ -144,7 +173,7 @@ main(int argc, char *argv[])
 
 #if defined(NATIVE_QT)
   send_keypress(uinput_fd, KEY_F12);
-  send_keypress(uinput_fd, KEY_TAB);
+  //send_keypress(uinput_fd, KEY_TAB);
   send_keypress(uinput_fd, KEY_ENTER);
 #endif
 
