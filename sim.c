@@ -83,8 +83,8 @@ main(int argc, char *argv[])
 // #define REMOTE_LINUX 0 
 // #define QEMU_XPACK 0
 // #define QEMU_UPSTREAM 0
-// #define NATIVE_QT 0
-#define REMOTE_LINUX 1
+#define NATIVE_QT 0
+// #define REMOTE_LINUX 1
 
 #if defined(REMOTE_LINUX)
   pid_t cur_pid = vfork();

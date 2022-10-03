@@ -1,3 +1,5 @@
-#!/bin/sh
+#!/bin/bash
 
-gcc -g sim.c -o ~/prog/apps/simulate-input/bin/simulate-input
+set -e
+
+sudo gcc -g sim.c -o /usr/local/bin/simulate-input
